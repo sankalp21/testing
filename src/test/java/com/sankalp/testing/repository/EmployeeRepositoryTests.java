@@ -2,6 +2,8 @@ package com.sankalp.testing.repository;
 
 import com.sankalp.testing.model.Employee;
 import static org.assertj.core.api.Assertions.assertThat;
+
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -15,18 +17,24 @@ public class EmployeeRepositoryTests {
     @Autowired
     private EmployeeRepository employeeRepository;
 
+    private Employee employee;
+
+    @BeforeEach
+    public void setup(){
+        employee = Employee.builder()
+                .firstName("Ram")
+                .lastName("Singh")
+                .email("ram.singh@mail.com")
+                .build();
+    }
+
     //Junit test for saving employee
     @Test
     public void givenEmployeeObject_whenSave_thenReturnSavedEmployee(){
         //given -> precondition or setup
-        Employee sankalp = Employee.builder()
-                .firstName("sankalp")
-                .lastName("sinha")
-                .email("ff@mail.com")
-                .build();
 
         //when -> action or behavior that we need to test
-        Employee savedEmployee = employeeRepository.save(sankalp);
+        Employee savedEmployee = employeeRepository.save(employee);
 
         //then -> verify the output
         assertThat(savedEmployee).isNotNull();
@@ -38,20 +46,15 @@ public class EmployeeRepositoryTests {
     @Test
     public void givenEmployeeLists_whenfindAll_thenReturnEmployeeLists(){
         //given -> precondition  or setup
-        Employee ram = Employee.builder()
-                .firstName("Ram")
-                .lastName("Singh")
-                .email("ram.singh@mail.com")
-                .build();
 
-        Employee shyam = Employee.builder()
+        Employee employee1 = Employee.builder()
                 .firstName("Shyam")
                 .lastName("Sunder")
                 .email("Shyam.sunder@mail.com")
                 .build();
 
-        employeeRepository.save(ram);
-        employeeRepository.save(shyam);
+        employeeRepository.save(employee);
+        employeeRepository.save(employee1);
 
         //when -> action or behavior that we need to test
         List<Employee> employeeLists = employeeRepository.findAll();
@@ -65,54 +68,37 @@ public class EmployeeRepositoryTests {
     @Test
     public void givenEmployeeObject_whenFinfById_thenReturnEmployee(){
         //given -> precondition or setup
-        Employee ram = Employee.builder()
-                .firstName("Ram")
-                .lastName("Singh")
-                .email("ram.singh@mail.com")
-                .build();
 
-        employeeRepository.save(ram);
+        employeeRepository.save(employee);
 
         //when -> action or behvior we want to test
-        Employee employee = employeeRepository.findById(ram.getId()).get();
+        Employee fetchedEmployee = employeeRepository.findById(employee.getId()).get();
 
         //then -> verify results
-        assertThat(employee).isNotNull();
+        assertThat(fetchedEmployee).isNotNull();
     }
 
     //Junit for getting employee by email
     @Test
     public void givenEmployeeObject_whenFindByEmail_thenReturnEmployee(){
         //given -> precondition or setup
-        Employee ram = Employee.builder()
-                .firstName("ram")
-                .lastName("singh")
-                .email("ram.singh@mail.com")
-                .build();
-
-        employeeRepository.save(ram);
+        employeeRepository.save(employee);
 
         //when -> action or behavior we want to test
-        Employee employee = employeeRepository.findByEmail(ram.getEmail()).get();
+        Employee fetchedEmployee = employeeRepository.findByEmail(employee.getEmail()).get();
 
         //then -> verify results
-        assertThat(employee).isNotNull();
+        assertThat(fetchedEmployee).isNotNull();
     }
 
     //Junit for updating employee
     @Test
     public void givenEmployeeObject_whenUpdateEmployee_thenReturnUpdatedEmployee(){
         //given -> precondition or setup
-        Employee ram = Employee.builder()
-                .firstName("ram")
-                .lastName("singh")
-                .email("ram.singh@mail.com")
-                .build();
-
-        employeeRepository.save(ram);
+        employeeRepository.save(employee);
 
         //when -> action or behavior we want to test
-        Employee savedEmployee = employeeRepository.findByEmail(ram.getEmail()).get();
+        Employee savedEmployee = employeeRepository.findByEmail(employee.getEmail()).get();
         savedEmployee.setLastName("cena");
         savedEmployee.setEmail("ram.cena@mail.com");
 
@@ -127,17 +113,11 @@ public class EmployeeRepositoryTests {
     @Test
     public void givenEmployeeObject_whenDelete_thenRemoveEmployee(){
         //given -> precondition or setup
-        Employee ram = Employee.builder()
-                .firstName("ram")
-                .lastName("singh")
-                .email("ram.singh@mail.com")
-                .build();
-
-        employeeRepository.save(ram);
+        employeeRepository.save(employee);
 
         //when -> action or behavior we want to test
-        employeeRepository.delete(ram);
-        Optional<Employee> employeeOptional = employeeRepository.findById(ram.getId());
+        employeeRepository.delete(employee);
+        Optional<Employee> employeeOptional = employeeRepository.findById(employee.getId());
 
         //then -> verify results
         assertThat(employeeOptional).isEmpty();
@@ -147,19 +127,10 @@ public class EmployeeRepositoryTests {
     @Test
     public void givenEmployeeObject_whenFindByInitialsViaIndexParams_thenReturnEmployee(){
         //given -> precondition or setup
-        String firstName = "ram";
-        String lastName = "singh";
-
-        Employee ram = Employee.builder()
-                .firstName(firstName)
-                .lastName(lastName)
-                .email("ram.singh@mail.com")
-                .build();
-
-        employeeRepository.save(ram);
+        employeeRepository.save(employee);
 
         //when -> action or behavior we want to test
-        Optional<Employee> employeeOptional = employeeRepository.findByInitials(firstName, lastName);
+        Optional<Employee> employeeOptional = employeeRepository.findByInitials(employee.getFirstName(), employee.getLastName());
 
         //then -> verify results
         assertThat(employeeOptional).isNotEmpty();
@@ -169,19 +140,10 @@ public class EmployeeRepositoryTests {
     @Test
     public void givenEmployeeObject_whenFindByInitialsViaNamedParams_thenReturnEmployee(){
         //given -> precondition or setup
-        String firstName = "ram";
-        String lastName = "singh";
-
-        Employee ram = Employee.builder()
-                .firstName(firstName)
-                .lastName(lastName)
-                .email("ram.singh@mail.com")
-                .build();
-
-        employeeRepository.save(ram);
+        employeeRepository.save(employee);
 
         //when -> action or behavior we want to test
-        Optional<Employee> employeeOptional = employeeRepository.findByInitialsViaNamedParams(firstName, lastName);
+        Optional<Employee> employeeOptional = employeeRepository.findByInitialsViaNamedParams(employee.getFirstName(), employee.getLastName());
 
         //then -> verify results
         assertThat(employeeOptional).isNotEmpty();
@@ -191,19 +153,10 @@ public class EmployeeRepositoryTests {
     @Test
     public void givenEmployeeObject_whenFindByInitialsViaNative_thenReturnEmployee(){
         //given -> precondition or setup
-        String firstName = "ram";
-        String lastName = "singh";
-
-        Employee ram = Employee.builder()
-                .firstName(firstName)
-                .lastName(lastName)
-                .email("ram.singh@mail.com")
-                .build();
-
-        employeeRepository.save(ram);
+        employeeRepository.save(employee);
 
         //when -> action or behavior we want to test
-        Optional<Employee> employeeOptional = employeeRepository.findByInitialViaNative(firstName, lastName);
+        Optional<Employee> employeeOptional = employeeRepository.findByInitialViaNative(employee.getFirstName(), employee.getLastName());
 
         //then -> verify results
         assertThat(employeeOptional).isNotEmpty();
@@ -213,19 +166,10 @@ public class EmployeeRepositoryTests {
     @Test
     public void givenEmployeeObject_whenFindByInitialsViaNativeNamedParams_thenReturnEmployee(){
         //given -> precondition or setup
-        String firstName = "ram";
-        String lastName = "singh";
-
-        Employee ram = Employee.builder()
-                .firstName(firstName)
-                .lastName(lastName)
-                .email("ram.singh@mail.com")
-                .build();
-
-        employeeRepository.save(ram);
+        employeeRepository.save(employee);
 
         //when -> action or behavior we want to test
-        Optional<Employee> employeeOptional = employeeRepository.findByInitialsViaNativeNamedParams(firstName, lastName);
+        Optional<Employee> employeeOptional = employeeRepository.findByInitialsViaNativeNamedParams(employee.getFirstName(), employee.getLastName());
 
         //then -> verify results
         assertThat(employeeOptional).isNotEmpty();
