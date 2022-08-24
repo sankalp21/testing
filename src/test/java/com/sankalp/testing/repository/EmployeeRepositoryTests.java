@@ -186,4 +186,48 @@ public class EmployeeRepositoryTests {
         //then -> verify results
         assertThat(employeeOptional).isNotEmpty();
     }
+
+    //Junit for finding Employee by first and last name employee using native index params
+    @Test
+    public void givenEmployeeObject_whenFindByInitialsViaNative_thenReturnEmployee(){
+        //given -> precondition or setup
+        String firstName = "ram";
+        String lastName = "singh";
+
+        Employee ram = Employee.builder()
+                .firstName(firstName)
+                .lastName(lastName)
+                .email("ram.singh@mail.com")
+                .build();
+
+        employeeRepository.save(ram);
+
+        //when -> action or behavior we want to test
+        Optional<Employee> employeeOptional = employeeRepository.findByInitialViaNative(firstName, lastName);
+
+        //then -> verify results
+        assertThat(employeeOptional).isNotEmpty();
+    }
+
+    //Junit for finding Employee by first and last name employee using native named params
+    @Test
+    public void givenEmployeeObject_whenFindByInitialsViaNativeNamedParams_thenReturnEmployee(){
+        //given -> precondition or setup
+        String firstName = "ram";
+        String lastName = "singh";
+
+        Employee ram = Employee.builder()
+                .firstName(firstName)
+                .lastName(lastName)
+                .email("ram.singh@mail.com")
+                .build();
+
+        employeeRepository.save(ram);
+
+        //when -> action or behavior we want to test
+        Optional<Employee> employeeOptional = employeeRepository.findByInitialsViaNativeNamedParams(firstName, lastName);
+
+        //then -> verify results
+        assertThat(employeeOptional).isNotEmpty();
+    }
 }

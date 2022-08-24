@@ -18,4 +18,12 @@ public interface EmployeeRepository extends JpaRepository<Employee, Long> {
     //custom query with named params
     @Query("select e from Employee e where e.firstName =:firstName and e.lastName =:lastName")
     Optional<Employee> findByInitialsViaNamedParams(@Param("firstName") String firstName, @Param("lastName") String lastName);
+
+    //custom native sql query with index params
+    @Query(value = "select * from Employee e where e.first_name = ?1 and e.last_name = ?2", nativeQuery = true)
+    Optional<Employee> findByInitialViaNative(String firstName, String lastName);
+
+    //custom native sql query with named params
+    @Query(value = "select * from Employee e where e.first_name =:firstName and e.last_name =:lastName", nativeQuery = true)
+    Optional<Employee> findByInitialsViaNativeNamedParams(@Param("firstName") String firstName, @Param("lastName") String lastName);
 }
