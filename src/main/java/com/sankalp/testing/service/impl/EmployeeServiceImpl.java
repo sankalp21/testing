@@ -12,17 +12,20 @@ import java.util.Optional;
 @Service
 public class EmployeeServiceImpl implements EmployeeService {
 
-    @Autowired
     private EmployeeRepository employeeRepository;
 
+    public EmployeeServiceImpl(EmployeeRepository employeeRepository){
+        this.employeeRepository = employeeRepository;
+    }
+
     @Override
-    public void saveEmployee(Employee employee) {
+    public Employee saveEmployee(Employee employee) {
         Optional<Employee> employeeOptional = employeeRepository.findByEmail(employee.getEmail());
 
         if(employeeOptional.isPresent()){
             throw new ResourceNotFoundException(String.format("Employee with email : %s already exists", employee.getEmail()));
         }
 
-        employeeRepository.save(employee);
+        return employeeRepository.save(employee);
     }
 }

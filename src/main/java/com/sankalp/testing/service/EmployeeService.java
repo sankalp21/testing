@@ -4,5 +4,5 @@ import com.sankalp.testing.model.Employee;
 
 public interface EmployeeService {
    
-    public void saveEmployee(Employee employee);
+    public Employee saveEmployee(Employee employee);
 }
