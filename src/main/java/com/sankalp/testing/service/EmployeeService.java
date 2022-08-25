@@ -10,4 +10,5 @@ public interface EmployeeService {
     public Employee saveEmployee(Employee employee);
     public List<Employee> getAllEmployee();
     public Optional<Employee> getEmployeeById(long id);
+    public Employee updateEmployee(Employee employee);
 }
