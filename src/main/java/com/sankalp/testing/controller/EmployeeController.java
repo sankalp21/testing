@@ -3,6 +3,7 @@ package com.sankalp.testing.controller;
 import com.sankalp.testing.model.Employee;
 import com.sankalp.testing.service.EmployeeService;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -26,5 +27,12 @@ public class EmployeeController {
     @GetMapping
     public List<Employee> getAllEmployee(){
         return  employeeService.getAllEmployee();
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<Employee> getEmployee(@PathVariable("id") long id){
+        return employeeService.getEmployeeById(id)
+                .map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
     }
 }

@@ -20,6 +20,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @WebMvcTest
 public class EmployeeControllerTests {
@@ -84,6 +85,51 @@ public class EmployeeControllerTests {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.size()",
                         is(employeeList.size())));
+    }
+
+    //Junit for getting Employee, positive test case
+    @Test
+    public void givenEmployeeId_whenGetEmployee_thenReturnEmployee() throws  Exception{
+        //given -> precondition or setup
+        Employee employee = Employee.builder()
+                .id(1L)
+                .firstName("ram")
+                .lastName("singh")
+                .email("ram.singh@mail.com")
+                .build();
+
+        given(employeeService.getEmployeeById(employee.getId())).willReturn(Optional.of(employee));
+
+        //when -> action or behavior we want to test
+        ResultActions response = mockMvc.perform(get("/api/employee/{id}", employee.getId()));
+
+        //then -> verify results
+        response.andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.firstName", is(employee.getFirstName())))
+                .andExpect(jsonPath("$.lastName", is(employee.getLastName())))
+                .andExpect(jsonPath("$.email", is(employee.getEmail())));
+    }
+
+    //Junit for getting employee, negative scenario
+    @Test
+    public void givenInvalidEmployeeId_whenGetEmployee_thenReturnEmpty() throws Exception{
+        //given -> precondition or setup
+        Employee employee = Employee.builder()
+                .id(1L)
+                .firstName("ram")
+                .lastName("singh")
+                .email("ram@mail.com")
+                .build();
+
+        given(employeeService.getEmployeeById(employee.getId())).willReturn(Optional.empty());
+
+        //when -> action or behavior we want to test
+        ResultActions response = mockMvc.perform(get("/api/employee/{id}", employee.getId()));
+
+        //then -> verify results
+        response.andDo(print())
+                .andExpect(status().isNotFound());
     }
 
 }
