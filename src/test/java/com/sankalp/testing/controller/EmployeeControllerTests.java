@@ -132,4 +132,74 @@ public class EmployeeControllerTests {
                 .andExpect(status().isNotFound());
     }
 
+    //Junit for updating Employee, positive test case
+    @Test
+    public void givenUpdatedEmployee_whenUpdateEmployee_thenReturnEmployee() throws  Exception{
+        //given -> precondition or setup
+        long employeeId = 1L;
+
+        Employee employee = Employee.builder()
+                .firstName("ram")
+                .lastName("singh")
+                .email("ram.singh@mail.com")
+                .build();
+
+
+        Employee updatedEmployee = Employee.builder()
+                .firstName("tom")
+                .lastName("grey")
+                .email("tom.grey@mail.com")
+                .build();
+
+        given(employeeService.getEmployeeById(employeeId)).willReturn(Optional.of(employee));
+        given(employeeService.updateEmployee(any(Employee.class)))
+                .willAnswer(invocation -> invocation.getArgument(0));
+
+        //when -> action or behavior we want to test
+        ResultActions response = mockMvc.perform(put("/api/employee/{id}", employeeId)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsBytes(updatedEmployee))
+        );
+
+        //then -> verify results
+        response.andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.firstName", is(updatedEmployee.getFirstName())))
+                .andExpect(jsonPath("$.lastName", is(updatedEmployee.getLastName())))
+                .andExpect(jsonPath("$.email", is(updatedEmployee.getEmail())));
+    }
+
+    //Junit for updating Employee, negative test case
+    @Test
+    public void givenUpdatedEmployee_whenUpdateEmployee_thenReturnNotFound() throws  Exception{
+        //given -> precondition or setup
+        long employeeId = 1L;
+
+        Employee employee = Employee.builder()
+                .firstName("ram")
+                .lastName("singh")
+                .email("ram.singh@mail.com")
+                .build();
+
+        Employee updatedEmployee = Employee.builder()
+                .firstName("tom")
+                .lastName("grey")
+                .email("tom.grey@mail.com")
+                .build();
+
+        given(employeeService.getEmployeeById(employeeId)).willReturn(Optional.empty());
+        given(employeeService.updateEmployee(any(Employee.class))).willAnswer(invocation -> invocation.getArgument(0));
+
+        //when -> action or behavior that we want to test
+        ResultActions response = mockMvc.perform(put("/api/employee/{id}", employeeId)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(updatedEmployee))
+        );
+
+        //then -> verify results
+        response.andDo(print())
+                .andExpect(status().isNotFound());
+    }
+
+
 }
