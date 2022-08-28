@@ -14,6 +14,8 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
+
+import static org.mockito.BDDMockito.willDoNothing;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -201,5 +203,26 @@ public class EmployeeControllerTests {
                 .andExpect(status().isNotFound());
     }
 
+    //Junit for deleting Employee
+    @Test
+    public void givenEmployeeId_whenDeleteEmployee_thenReturnNoting() throws  Exception{
+        //given -> precondition or setup
+        long employeeId = 1L;
+
+        Employee employee = Employee.builder()
+                .firstName("ram")
+                .lastName("singh")
+                .email("ram.singh@mail.com")
+                .build();
+
+        willDoNothing().given(employeeService).deleteEmployee(employeeId);
+
+        //when -> action or behavior that we want to test
+        ResultActions response = mockMvc.perform(delete("/api/employee/{id}", employeeId));
+
+        //then -> verify results
+        response.andDo(print())
+                .andExpect(status().isOk());
+    }
 
 }
